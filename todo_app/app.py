@@ -7,25 +7,16 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 
-#@app.route('/')
-#def index():
-#   return render_template('index.html',items=session_items.get_items())
 
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/')
 def index():
-    if request.method == 'POST':
-       session_items.add_item(request.form.get('Title'))
-
-
     return render_template('index.html',items=session_items.get_items())
 
 @app.route('/result', methods=['POST'])
 def create():
-    print("in Create function" + str(request.form.get('Title')))
     item  = request.form.get('Title')
-    if item != '':
-        session_items.add_item(item)
+    session_items.add_item(item)
     return redirect(url_for('index'))
  
 
