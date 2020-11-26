@@ -1,3 +1,4 @@
+
 {% extends "layout.html" %}
 {% block title %}To-Do App{% endblock %}
 
@@ -12,7 +13,28 @@
       <h2>Items</h2>
       <ul class="list-group mb-4">
         <!-- List the todo items here -->
+        <table>
+          <tr>
+            <th>Id</th>
+            <th>Status</th>
+            <th>Title</th>
+          </tr>
+        {% for item in items %}
+          <tr>
+            <td>{{ item['id'] }}</td>
+            <td>{{ item['status'] }}</td>
+            <td>{{ item['title'] }}</td>
+          </tr>
+        {% endfor %}
+      </table>
       </ul>
     </div>
   </div>
+  <form action='/result' method="POST">
+    <label>Title:
+      <input name ="Title" autocomplete="name" required>
+    </label>
+    <button> Add</button>
+  </form>
 {% endblock %}
+
