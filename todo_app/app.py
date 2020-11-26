@@ -11,7 +11,7 @@ app.config.from_object(Config)
 
 @app.route('/')
 def index():
-    return render_template('index.html',items=session_items.get_items())
+    return render_template('index.html', items=session_items.get_items())
 
 @app.route('/result', methods=['POST'])
 def create():
