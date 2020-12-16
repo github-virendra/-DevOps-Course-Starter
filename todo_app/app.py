@@ -1,6 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for
-from todo_app.data import session_items, trello_items 
+from todo_app.data import session_items
 
+from todo_app.data.items import Payload
+from todo_app.data.items import TrelloBoard
+from todo_app.data.items import TrelloStatus
+from todo_app.data.items import TrelloTask
 
 from todo_app.flask_config import Config
 
@@ -9,26 +13,30 @@ app.config.from_object(Config)
 
 
 
-
 @app.route('/')
 def index():
-    #return render_template('index.html', items=session_items.get_items())
-    data=trello_items.get_items()
-    return render_template('index.html', items=data)
-
+    #Get a board
+    board = TrelloBoard.get_board('5fb59a498ec194253c614ac7')
+    return render_template('index.html', items=board.get_tasks_on_a_board())
+  
 @app.route('/createNewToDoItems', methods=['POST'])
 def create():
+    #get the task item to add
     item  = request.form.get('Title')
-    print(item)
-    trello_items.add_item(item)
+    #Add the task item to ToDo List
+    TrelloBoard.add_item(item)
+
     return redirect(url_for('index'))
  
 @app.route('/complete_item', methods=['POST'])
 def update_items():
-    print("In Update Items")
-    data = request.form.get('cardId')
-    print(data)
-    trello_items.complete_item(data)
+ 
+    #Get the card details to update
+    card_id = request.form.get('cardId')
+    #Get a board
+    board = TrelloBoard.get_board('5fb59a498ec194253c614ac7')
+    board.complete_item(board,card_id)
+
     return redirect(url_for('index'))
 
 if __name__ == '__main__':

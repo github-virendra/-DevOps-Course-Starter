@@ -16,32 +16,17 @@
         <table>
           <tr>
             <th>Id</th>
-            <th style="white-space:nowrap">Update Status To</th>
-            <th style="white-space:nowrap">Current Status</th>
             <th style="white-space:nowrap"> Title</th>
+            <th style="white-space:nowrap">Current Status</th>            
+            <th style="white-space:nowrap">Update Status To</th>
           </tr>
-        {% for taskList in items['taskList'] %}
-          {% for card in taskList['cards'] %}
-            <tr>
-              <td>{{ card['id'] }}</td>
-              {% if card['status'] == "Backlog" %}
-                <td><form><button formaction='/complete_item' formmethod = "POST" type = "submit" name ="cardId" value = {{ card['id'] }}> ToDo</button></form></td>
-              {% elif card['status'] == "To Do" %}
-                <td><form><button formaction='/complete_item' formmethod = "POST" type = "submit" name ="cardId" value = {{ card['id'] }}> Doing</button></form></td>
-              {% elif card['status'] == "Doing" %}
-              <td><form><button formaction='/complete_item' formmethod = "POST" type = "submit" name ="cardId" value = {{ card['id'] }}> Code Review</button></form></td>
-              {% elif card['status'] == "Code Review" %}
-              <td><form><button formaction='/complete_item' formmethod = "POST" type = "submit" name ="cardId" value = {{ card['id'] }}> Testing</button></form></td>
-              {% elif card['status'] == "Testing" %}
-              <td><form><button formaction='/complete_item' formmethod = "POST" type = "submit" name ="cardId" value = {{ card['id'] }}> Done</button></form></td>
-              {% elif card['status'] == "Done" %}
-              <td><form><button formaction='/complete_item' formmethod = "POST" type = "submit" name ="cardId" value = {{ card['id'] }}> ToDo</button></form></td>
-
-              {% endif %}
-              <td>{{ card['status'] }}</td>
-              <td>{{ card['name'] }}</td>
-            </tr>
-          {% endfor %}
+        {% for task in items %}
+          <tr>
+            <td>{{ task.task_id }}</td>
+            <td>{{ task.task_title }}</td>
+            <td>{{ task.task_status }}</td>
+            <td><form><button formaction='/complete_item' formmethod = "POST" type = "submit" name ="cardId" value = {{ task.task_id }}> Update Status</button></form></td>
+          </tr>
         {% endfor %}
       </table>
       </ul>
