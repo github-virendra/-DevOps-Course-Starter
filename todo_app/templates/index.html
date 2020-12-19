@@ -25,7 +25,7 @@
             <td>{{ task.task_id }}</td>
             <td>{{ task.task_title }}</td>
             <td>{{ task.task_status }}</td>
-            <td><form><button formaction='/complete_item' formmethod = "POST" type = "submit" name ="cardId" value = {{ task.task_id }}> Update Status</button></form></td>
+            <td><form><button formaction='/complete_item' formmethod = "POST" type = "submit" name ="taskId" value = {{ task.task_id }}> Update Status</button></form></td>
           </tr>
         {% endfor %}
       </table>

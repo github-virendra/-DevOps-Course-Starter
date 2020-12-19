@@ -9,6 +9,27 @@ class TrelloTask(object):
         self.task_id = id
         self.task_title = title
         self.task_status = status
+    
+    def get_id(self):
+        return self.task_id
+
+    def get_task_status_id(self):
+        print("In get_task_status_id, task_id :" + self.task_id)
+        fields = "id"
+        status_ = (Url.get_card_status(self.task_id, fields)).json()
+        return status_['id']
+
+    def get_status(self):
+        print("In get_status, task_id :" + self.task_id)
+        fields = "name"
+        status_ = (Url.get_card_status(self.task_id, fields)).json()
+        self.task_status = status_['name']
+        return status_['name']
+
+    def update_task_status(self, status_id_to_update_to):
+        Url.update_cardstatus(self.task_id, status_id_to_update_to).json()
+
+ 
 
 class TrelloStatus(object):
     """
@@ -29,6 +50,16 @@ class TrelloStatus(object):
     def get_tasks(self):
         return self.items
 
+    def create_task(self, title)->TrelloTask:
+        response = (Url.add_task_to_list(title, self.status_id)).json()
+        task = TrelloTask(response['id'],response['name'],self.get_status_name())
+        self.add_task(task)
+     
+    def add_task(self, task:TrelloTask):
+        self.get_tasks().append(TrelloTask(task.task_id, task.task_title, task.task_status))
+        return task
+
+
 
 class TrelloBoard(object):
     """
@@ -43,35 +74,40 @@ class TrelloBoard(object):
     def get_board_lists(self):
         return self.list_
     
-    def set_board_lists(self, value):
+    def add_lists(self, value):
         self.list_.append(value)
 
     def get_board_id(self):
         return self.board_id
+
+    def get_items(self):
+
+        query_string = {'cards':'all', 'card_fields':'idBoard,idList,name,desc'}
+        status_dict = (Url.get_lists_on_a_Board(self.get_board_id(), query_string)).json()
+        
+        for status in status_dict:
+            task_list = TrelloStatus(status['id'], status['name'])
+        
+            for task in status['cards']:
+                task_ = TrelloTask(task['id'],task['name'],task_list.status)
+                task_list.add_task(task_)
     
-    def get_a_list_on_a_board(self, **listArgs)-> TrelloStatus:
-        for status in self.list_:
-            print("In get_a_list_on_a_Board")
+            self.add_lists(task_list)
+     
+    def get_status(self, **listArgs)-> TrelloStatus:
+        status_dict = (Url.get_lists_on_a_Board(self.get_board_id())).json()
+        for status in status_dict:
+            task_list = TrelloStatus(status['id'], status['name'])
             for key, value in listArgs.items():
                 if key == 'id':
-                    if status.get_status_id() == value:
-                        return status
+                    if status['id'] == value:
+                        self.add_lists(task_list)
+                        return task_list
                 if key == 'name':
-                    if status.get_status_name() == value:
-                        return status
+                    if status['name'] == value:
+                        self.add_lists(task_list)
+                        return task_list
 
-    def get_status_id(self, name):
-        for status in self.list_:
-            print("In get_status_id")
-            if status.get_status_name() == name:
-                return status.get_status_id()
-
-    def get_status_name(self, id):
-        for status in self.list_:
-            print("In get_status_name")
-            if status.get_status_id() == id:
-                return status.get_status_name()
-    
     def get_the_status_list(self,query_string='id'):
         """
         returns list of Status by name or by id
@@ -81,15 +117,18 @@ class TrelloBoard(object):
         status_list_by_name = list()
         status_list_by_id = list()
 
-        for status in self.list_:
-            status_list_by_name.append(status.get_status_name())
-            status_list_by_id.append(status.get_status_id())
+        status_dict = Url.get_lists_on_a_Board(self.board_id).json()
+        for status in status_dict:
+            self.add_lists(TrelloStatus(status['id'], status['name']))
+            status_list_by_id.append(status['id'])
+            status_list_by_name.append(status['name'])
+
         if query_string == 'name':
             return status_list_by_name
         else:
             return status_list_by_id
 
-    def get_next_status_of_the_card(self, status_id)->TrelloStatus:
+    def get_next_status_of_the_task(self, status_id)->TrelloStatus:
         status_list_by_id = self.get_the_status_list()
         status_list_by_name = self.get_the_status_list('name')
         position = status_list_by_id.index(status_id)
@@ -118,86 +157,21 @@ class TrelloBoard(object):
 
         return board_tasks
 
-
-    
+    def get_task(self, task_id):
+        item = Url.get_card_on_a_Board(self.board_id, task_id).json()
+        status = self.get_status(id = item['idList'])
+        task = TrelloTask(item['id'], item['name'],status.get_status_name())
+        return task
+  
 
     @classmethod
     def get_board(cls, id):
         #Get a board
-        board_id, board_name = (TrelloBoard.get_trello_board(id)).values()       
-        board =  TrelloBoard(board_id, board_name)
-        # Get items
-        TrelloBoard.get_items(board)
-        return board
-
-    @classmethod
-    def get_items(cls, board):
-
-        board_id = board.get_board_id()
-        status_dict = (Url.get_lists_on_a_Board(board_id)).json()
-        
-        for status in status_dict:
-            task_list = TrelloStatus(status['id'], status['name'])
-        
-            for task in status['cards']:
-                task_ = TrelloTask(task['id'],task['name'],task_list.status)
-                task_list.items.append(task_)
-    
-            board.list_.append(task_list)
- 
-        return board
-    
-    @classmethod
-    def complete_item(cls, board, card_id):
-        #Get the List the card is in
-        status_id = TrelloBoard.get_the_status_id_of_card(card_id)
-        status = board.get_a_list_on_a_board(id=status_id)
-
-        print("The Card belongs to List:", status.get_status_name())
-        #get next status of the card
-        next_status_id = board.get_next_status_of_the_card(status_id)
-        next_status = board.get_a_list_on_a_board(id=next_status_id)
-        print("Next Status Name :", next_status.get_status_name())
-        TrelloBoard.update_card_status(card_id, next_status_id)
-
-    @staticmethod
-    def update_card_status(id, status_id_to_update_to):
-        item = (Url.update_cardstatus(id, status_id_to_update_to)).json()
-        return item
-
-    @staticmethod
-    def get_the_status_id_of_card(card_id):
-        print("In get_the_status_id_of_card, card_id :" + str(card_id))
-        status_ = (Url.get_card_status(card_id)).json()
-
-        print(status_)
-        return status_['id']
-
-    @staticmethod
-    def add_item(title):
-        board = TrelloBoard.get_board('5fb59a498ec194253c614ac7')
-        status_id = board.get_status_id('To Do')
-        task = (Url.add_item_to_ToDo_list(title, status_id)).json()
-        return task
-
-    @staticmethod
-    def get_trello_board(id):
         response = (Url.get_TrelloBoard(id)).json()
-        return response
-      
-    @staticmethod
-    def get_statuses_on_a_board(board):
-        print("In getLists_On_A_Board() - Made a request")
-        status_list = (Url.get_lists_on_a_Board(board.get_board_id())).json()
-      
-        for status in status_list:
-            print(status['id'])
-            print(status['name'])
-            board.set_board_lists(TrelloStatus(status['id'], status['name']))
-        
-        for status in board.get_board_lists():
-            print("Status Name: ", status.get_status_name())
-            print("Status id: ", status.get_status_id())
+        board_id, board_name = response.values()       
+        board =  TrelloBoard(board_id, board_name)
+        return board
+
     
 class Url():
     url_base = 'https://api.trello.com/1'
@@ -215,29 +189,37 @@ class Url():
         return response
     
     @classmethod    
-    def get_lists_on_a_Board(cls,board_id):
+    def get_lists_on_a_Board(cls,board_id,query_string={}):
         print("In get_lists_on_a_Board()")
         url_ = Url.url_base + '/boards/' + board_id + '/lists'
         print(url_)
-        query_string = {'cards':'all', 'card_fields':'idBoard,idList,name,desc'}
         data = Payload(query_string)
         response = requests.get(url_, params=data.get_pay_load())
         return response
 
+    @classmethod
+    def get_card_on_a_Board(cls, board_id, task_id):
+        print('In get_card_on_a_Board()')
+        url_ = Url.url_base + '/boards/' + board_id + '/cards/' + task_id
+        print(url_)
+        query_string = {'fields':'id,name,idList'}
+        data = Payload(query_string)
+        response = requests.get(url_, params=data.get_pay_load())
+        return response
 
     @classmethod
-    def get_card_status(cls,card_id):
+    def get_card_status(cls,card_id, fields=''):
         url_ = Url.url_base + '/cards/' + card_id + '/list'
         print(url_)
-        #get the list the card is on
-        query_string = {"fields":"id"}
+        #get the list the card is on            
+        query_string = {"fields":fields}
         response = requests.get(url_, params=Payload(query_string).get_pay_load())
         return response
 
     @classmethod
-    def add_item_to_ToDo_list(cls,title, status_id):
+    def add_task_to_list(cls,title, status_id):
         url_ = Url.url_base + '/cards'
-        print("In add_item_to_ToDo_list() status_id : " +  status_id)
+        print("In add_task_to_list() status_id : " +  status_id)
         print(url_)
         query_string = {'name' : title,'idList' : status_id}
         data = Payload(query_string)
