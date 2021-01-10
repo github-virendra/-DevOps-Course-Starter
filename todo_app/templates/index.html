@@ -16,21 +16,23 @@
         <table>
           <tr>
             <th>Id</th>
-            <th>Status</th>
-            <th>Title</th>
+            <th style="white-space:nowrap"> Title</th>
+            <th style="white-space:nowrap">Current Status</th>            
+            <th style="white-space:nowrap">Update Status To</th>
           </tr>
-        {% for item in items %}
+        {% for task in items %}
           <tr>
-            <td>{{ item['id'] }}</td>
-            <td>{{ item['status'] }}</td>
-            <td>{{ item['title'] }}</td>
+            <td>{{ task.task_id }}</td>
+            <td>{{ task.task_title }}</td>
+            <td>{{ task.task_status }}</td>
+            <td><form><button formaction='/complete_item' formmethod = "POST" type = "submit" name ="taskId" value = {{ task.task_id }}> Update Status</button></form></td>
           </tr>
         {% endfor %}
       </table>
       </ul>
     </div>
   </div>
-  <form action='/result' method="POST">
+  <form action='/createNewToDoItems' method="POST">
     <label>Title:
       <input name ="Title" autocomplete="name" required>
     </label>
