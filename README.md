@@ -32,6 +32,23 @@ $ cp .env.template .env  # (first time only)
 
 The `.env` file is used by flask to set environment variables when running `flask run`. This enables things like development mode (which also enables features like hot reloading when you make a file change). There's also a [SECRET_KEY](https://flask.palletsprojects.com/en/1.1.x/config/#SECRET_KEY) variable which is used to encrypt the flask session cookie.
 
+# Trello configuration
+Trello is a web-based listmaking app popular among many dev teams because it provides
+a lightweight way to track work.
+Trello provides a REST API that this app uses to create, read and
+update to-do items. In Trello, items or tasks are called cards and
+they are grouped together as lists ('To Do', 'Done', etc.) under
+boards.
+
+You'll need to create a Trello account and a dedicated board to store the to-do items for your app. 
+Setup the Trello board ID to be used in the .env file, set the TRELLO_BOARD_ID with the reference trello board to be used in the Todo app. 
+
+Register to the website trello.com - https://trello.com/signup to create an account.
+
+Generate an API key and token by following the https://trello.com/app-key
+
+After creating a Trello account and generate the API key and token. Please ensure the key and token are kept safe and not shared. Set the T_KEY and T_TOKEN in the .env file with the corresponding key and token values.
+
 ## Running the App
 
 Once the all dependencies have been installed, start the Flask app in development mode within the poetry environment by running:
@@ -50,3 +67,5 @@ You should see output similar to the following:
  * Debugger PIN: 226-556-590
 ```
 Now visit [`http://localhost:5000/`](http://localhost:5000/) in your web browser to view the app.
+
+Add new task in the Title. The tasks are added to To Do list. Use the update button to change the status of the task. The status of the Done task can also be reset to backlog using update status.
