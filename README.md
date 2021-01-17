@@ -69,3 +69,22 @@ You should see output similar to the following:
 Now visit [`http://localhost:5000/`](http://localhost:5000/) in your web browser to view the app.
 
 Add new task in the Title. The tasks are added to To Do list. Use the update button to change the status of the task. The status of the Done task can also be reset to backlog using update status.
+
+
+## Running the tests
+## Unit tests and integrations tests
+Once the all dependencies have been installed,start the tests in development mode within the poetry environment by running:
+For running the integration test .env.tests file is used for basic configuration
+
+```bash
+$ poetry run pytest -s tests
+```
+
+## End to end tests using Selenium
+Ensure the corresponding selenium webdriver is available in the root of the project. chromedriver.exe is used for end to end tests in this instance. 
+
+For running the end to end tests:
+
+```bash
+$ poetry run pytest -s tests_e2e
+```

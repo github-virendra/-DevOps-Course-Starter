@@ -10,29 +10,80 @@
 
   <div class="row">
     <div class="col-md-12">
-      <h2>Items</h2>
       <ul class="list-group mb-4">
+        <h2>To-Do Tasks</h2>
         <!-- List the todo items here -->
         <table>
           <tr>
             <th>Id</th>
-            <th style="white-space:nowrap"> Title</th>
-            <th style="white-space:nowrap">Current Status</th>            
-            <th style="white-space:nowrap">Update Status To</th>
+            <th>Status</th>
+            <th>Title</th>
           </tr>
-        {% for task in items %}
+        {% for item in view_model.todo %}
           <tr>
-            <td>{{ task.task_id }}</td>
-            <td>{{ task.task_title }}</td>
-            <td>{{ task.task_status }}</td>
-            <td><form><button formaction='/complete_item' formmethod = "POST" type = "submit" name ="taskId" value = {{ task.task_id }}> Update Status</button></form></td>
+            <td>{{ item['id'] }}</td>
+            <td>{{ item['status'] }}</td>
+            <td>{{ item['title'] }}</td>
+            <td><form><button formaction='/complete_item' formmethod = "POST" type = "submit" name ="taskId" value = {{ item['id'] }}> Update Status</button></form></td>
           </tr>
         {% endfor %}
       </table>
+      <h2>Doing Tasks</h2>
+      <!-- List the doing items here -->
+      <table>
+        <tr>
+          <th>Id</th>
+          <th>Status</th>
+          <th>Title</th>
+        </tr>
+        {% for item in view_model.doing %}
+          <tr>
+            <td>{{ item['id'] }}</td>
+            <td>{{ item['status'] }}</td>
+            <td>{{ item['title'] }}</td>
+            <td><form><button formaction='/complete_item' formmethod = "POST" type = "submit" name ="taskId" value = {{ item['id'] }}> Update Status</button></form></td>
+          </tr>
+        {% endfor %}
+      </table>
+      <h2>Done Tasks</h2>
+      <!-- List the Done items here -->
+      <table>
+        <tr>
+          <th>Id</th>
+          <th>Status</th>
+          <th>Title</th>
+        </tr>
+      {% for item in view_model.show_all_done %}
+        <tr>
+          <td>{{ item['id'] }}</td>
+          <td>{{ item['status'] }}</td>
+          <td>{{ item['title'] }}</td>
+          <td><form><button formaction='/complete_item' formmethod = "POST" type = "submit" name ="taskId" value = {{ item['id'] }}> Update Status</button></form></td>
+        </tr>
+      {% endfor %}
+    </table>
+      <details>
+        <summary>Other items</summary>
+        <table>
+          <tr>
+            <th>Id</th>
+            <th>Status</th>
+            <th>Title</th>
+          </tr>
+          {% for item in view_model.older_done_items %}
+          <tr>
+            <td>{{ item['id']}}</td>
+            <td>{{ item['status']}}</td>
+            <td>{{item['title']}}</td>
+            <td><form><button formaction='/complete_item' formmethod = "POST" type = "submit" name ="taskId" value = {{ item['id'] }}> Update Status</button></form></td>
+          </tr>
+          {% endfor %}
+        </table>
+      </details>
       </ul>
     </div>
   </div>
-  <form action='/createNewToDoItems' method="POST">
+  <form action='/add_item' method="POST">
     <label>Title:
       <input name ="Title" autocomplete="name" required>
     </label>
