@@ -49,15 +49,13 @@ class Board:
 class StatusList:
     def __init__(self):
 
-        # board_id = app.config.get("TRELLO_BOARD_ID")
-        # board_name = app.config.get("TRELLO_BOARD_NAME")
         board_id = os.environ.get('TRELLO_BOARD_ID')
         board_name = os.environ.get('TRELLO_BOARD_NAME')
-        print('In StatusList init')
-        print('Board Id : ' + board_id)
+        # print('In StatusList init')
+        # print('Board Id : ' + board_id)
         url = "https://api.trello.com/1/boards/" + board_id + "/lists"
 
-        print(url)
+        #print(url)
         query = {
                     'key' : app.config.get("T_KEY"),
                     'token': app.config.get("T_TOKEN"),
@@ -65,10 +63,8 @@ class StatusList:
              }
 
         response = requests.request("GET", url, params=query).json()
-        #response = requests.get("https://api.trello.com/1/boards/5feb252a40ff2d09fa3a8eea/lists?key=acbb0995281e26011d961a4e89a5ddbf&token=f94c7ed49ec616120fb26fbd7aa8f40193b0b697f663aaa493250727ae61a9ca&fields=id,name,idBoard")
         self.statuses_ = response
-        print('In StatusList init :')
-        print(self.statuses_)
+
     
     def get_status_id(self, name):
         for status in self.statuses_:
@@ -108,12 +104,11 @@ class Item:
         
         url = "https://api.trello.com/1/cards/" + self.id
 
-        print('Updating status of task Id: ', self.id)
-        print('Status will be updated to :' + next_status['name'])
-        print('date :', self.complete_date)
+        # print('Updating status of task Id: ', self.id)
+        # print('Status will be updated to :' + next_status['name'])
+        # print('date :', self.complete_date)
        
         if next_status['name'] == "To Do":
-            print('Resetting Date to null')
             self.complete_date = ''
             print("Set date to :", self.complete_date)
         query = {
@@ -128,8 +123,6 @@ class Item:
     @staticmethod
     def get_task_on_the_board(task_id): 
         
-        # board_id = app.config.get("TRELLO_BOARD_ID")
-        # board_name = app.config.get("TRELLO_BOARD_NAME")
         board_id = os.environ.get('TRELLO_BOARD_ID')
         board_name = os.environ.get('TRELLO_BOARD_NAME')
 
@@ -147,22 +140,12 @@ class Item:
 
 class Items:
     def __init__(self):
-        #self.items = session.get('items', session_items._DEFAULT_ITEMS)
-        #response = requests.get("https://api.trello.com/1/boards/5feb252a40ff2d09fa3a8eea/cards?key=acbb0995281e26011d961a4e89a5ddbf&token=f94c7ed49ec616120fb26fbd7aa8f40193b0b697f663aaa493250727ae61a9ca&fields=id,name,idBoard,idList,due")
-
-        # board_id = app.config.get("TRELLO_BOARD_ID")
-        # board_name = app.config.get("TRELLO_BOARD_NAME")
-
         board_id = os.environ.get('TRELLO_BOARD_ID')
         board_name = os.environ.get('TRELLO_BOARD_NAME')
 
-        print(board_id, board_name)        
-
-        
-
-
+        #print(board_id, board_name)        
         url = "https://api.trello.com/1/boards/" + board_id + "/cards"
-        print(url)
+        #print(url)
 
         query = {
                 'key' : app.config.get("T_KEY"),
@@ -202,19 +185,9 @@ class Items:
     def get_items(self):
         return [ item for item in self.items]
 
-    # @property
-    # def get_item(self, id):
-    #     return next((item for item in self.items if item['id'] == int(id)), None)
-
     
     def add_item(self, title, list_id):
         
-        # Determine the ID for the item based on that of the previously added item
-        #items_ = self.get_items
-        #id = items_[-1]['id'] + 1 if items_ else 0
-
-        #item = { 'id': id, 'title': title, 'status': 'To Do' }
-
         #Api call
         url = "https://api.trello.com/1/cards"
         query = {
@@ -231,8 +204,6 @@ class Items:
         # Add the item to the list
         self.items.append(item)
         #session['items'] = self.items
-
-
 
 
     def save_item(self, item):

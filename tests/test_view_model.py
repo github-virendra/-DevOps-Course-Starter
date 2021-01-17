@@ -1,5 +1,4 @@
 from todo_app.data.view_model import ViewModel
-#from todo_app.data import session_items
 from datetime import datetime
 
 

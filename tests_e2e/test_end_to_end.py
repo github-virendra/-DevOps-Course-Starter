@@ -3,7 +3,7 @@ import pytest
 from threading import Thread
 from todo_app.data.trello_items import Board
 from dotenv import find_dotenv, load_dotenv
-#from todo_app.data import session_items
+
 
 file_path = find_dotenv('.env')
 print(file_path)
@@ -23,13 +23,13 @@ from selenium.webdriver.support import expected_conditions as EC
 
 @pytest.fixture(scope="module")
 def driver():
-    print('in Driver')
+    #print('in Driver')
     with Chrome() as driver:
         yield driver
 
 @pytest.fixture(scope='module')
 def test_app():
-    print('In test_app')
+    print('Starting test_app')
            
     # construct the new application
     application = app.create_app()
@@ -56,13 +56,13 @@ def test_app():
         board.delete_board()
 
 def test_task_journey(driver, test_app):
-    print('In test_task_journey')
+    print('In test_task_journey: Testing Index page')
     driver.get('http://localhost:5000/')
 
     assert driver.title == 'To-Do App'
 
 def test_add_task_journey(driver, test_app):
-    print('In test_add_task_journey')
+    print('In test_add_task_journey : Add a task')
     driver.get('http://localhost:5000/')
     #assert driver.title == 'To-Do App'
     elem = driver.find_element_by_name("Title")
@@ -88,7 +88,7 @@ def test_add_task_journey(driver, test_app):
     assert title == 'Task A' 
 
 def test_doing_task_journey(driver, test_app):
-    print('In test_doing_task_journey')
+    print('In test_doing_task_journey: start Doing the task')
     driver.get('http://localhost:5000/')
 
     task_rows = len(driver.find_elements_by_xpath('/html/body/div/div[2]/div/ul/table[1]/tbody/tr'))
@@ -137,7 +137,7 @@ def test_doing_task_journey(driver, test_app):
 
 
 def test_done_task_journey(driver, test_app):
-    print('In test_done_task_journey')
+    print('In test_done_task_journey : Moving task to Done')
     driver.get('http://localhost:5000/')
 
 
@@ -168,7 +168,7 @@ def test_done_task_journey(driver, test_app):
 
     task_rows = len(driver.find_elements_by_xpath('/html/body/div/div[2]/div/ul/table[3]/tbody/tr'))
     task_columns = len(driver.find_elements_by_xpath('/html/body/div/div[2]/div/ul/table[3]/tbody/tr[1]/th'))
-    print('Fetched data from Done table :')
+    #print('Fetched data from Done table :')
     # print(task_rows)
     # print(task_columns)
     task=[]
@@ -187,7 +187,7 @@ def test_done_task_journey(driver, test_app):
 
 
 def test_reset_task_journey(driver, test_app):
-    print('In test_reset_task_journey')
+    print('In test_reset_task_journey : Restting the task back to ToDo')
     driver.get('http://localhost:5000/')
     #assert driver.title == 'To-Do App'
    
@@ -217,7 +217,7 @@ def test_reset_task_journey(driver, test_app):
 
     task_rows = len(driver.find_elements_by_xpath('/html/body/div/div[2]/div/ul/table[1]/tbody/tr'))
     task_columns = len(driver.find_elements_by_xpath('/html/body/div/div[2]/div/ul/table[1]/tbody/tr[1]/th'))
-    print('Fetched data from To Do table :')
+    #print('Fetched data from To Do table :')
     print(task_rows)
     print(task_columns)
     task=[]

@@ -31,7 +31,6 @@ class ViewModel:
         done_items = self.done
 
         if len(done_items) < 5:
-            #done_items.sort(key = lambda item: item['id'])
             self.items_=[]
             return done_items
         else:
@@ -45,10 +44,9 @@ class ViewModel:
         recent_items = [item for item in all_done_items if datetime.strptime(item['complete_date'],"%c").date() == self.today_.date() or datetime.strptime(item['complete_date'],"%c").date() > self.today_.date()]
 
         older_items = [item for item in all_done_items if item not in recent_items]
-        print('In recent_done_items : items that are old')
-        print(older_items)
+        # print('In recent_done_items : items that are old')
+        # print(older_items)
         self.items_ = older_items
-        #recent_items.sort(key = lambda item: item['id'])
         return recent_items
 
     @property
@@ -59,9 +57,8 @@ class ViewModel:
 
         older_items = [item for item in all_done_items if (self.today_ - datetime.strptime(item['complete_date'],"%c")).total_seconds() > 0]
 
-        #older_items.sort(key = lambda item: item['id'])
-        print('Older Items :')
-        print(older_items)
+        # print('Older Items :')
+        # print(older_items)
         return older_items
 
     @classmethod
