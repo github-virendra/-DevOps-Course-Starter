@@ -12,8 +12,9 @@ def test_just_the_todo_items():
 
     # Act
     todo_items = view_model.todo
-
+    
     # Assert
+    assert len(todo_items) == 1
     for item in todo_items:
         assert item['status'] == "To Do"
 
@@ -29,6 +30,7 @@ def test_just_the_doing_items():
     doing_items = view_model.doing
 
     # Assert
+    assert len(doing_items) == 1
     for item in doing_items:
         assert item['status'] == "Doing"
 
@@ -45,6 +47,7 @@ def test_just_the_done_items():
     don_items = view_model.done
 
     # Assert
+    assert len(don_items) == 1
     for item in don_items:
         assert item['status'] == "Done"
 
@@ -92,6 +95,7 @@ def test_show_recent_done_items():
     recent_done_items = view_model.recent_done_items
     
     # Assert
+    assert len(recent_done_items) == 7
     for item in recent_done_items:
         assert item['id'] in id_of_recent_items
 
@@ -118,6 +122,7 @@ def test_show_older_done_items():
     older_done_items = view_model.older_done_items
     
     # Assert
+    assert len(older_done_items) == 1
     for item in older_done_items:
         assert item['id'] in id_of_old_items
 

@@ -1,4 +1,4 @@
-from flask import session, current_app as app
+from flask import current_app as app
 import requests
 from datetime import datetime 
 import os
@@ -8,7 +8,7 @@ class Board:
     def __init__(self, name):
 
         url = "https://api.trello.com/1/boards/"
-        #print('in Board __init__')
+
         query = {
                     'key' : app.config.get("T_KEY"),
                     'token': app.config.get("T_TOKEN"),
@@ -16,19 +16,13 @@ class Board:
             }
 
         response = requests.request("POST", url, params=query).json()
-        #print(response['id'])
         self.board_id_ = response['id']
-        self.board_name_ = response['name']
         os.environ['TRELLO_BOARD_ID'] = self.board_id_
-        os.environ['TRELLO_BOARD_NAME'] = self.board_name_
     
     @property
     def board_id(self):
         return self.board_id_
 
-    @property
-    def board_name(self):
-        return self.board_name_
 
 
     def delete_board(self):
@@ -39,7 +33,7 @@ class Board:
                     'key' : app.config.get("T_KEY"),
                     'token': app.config.get("T_TOKEN"),
              }
-        print('Deleting Board :' , self.board_id)
+        print('\nDeleting Board :' , self.board_id)
         response = requests.request("DELETE", url, params=query).json()
         if response['_value'] == None:
             print("Board Deleted")
@@ -50,12 +44,8 @@ class StatusList:
     def __init__(self):
 
         board_id = os.environ.get('TRELLO_BOARD_ID')
-        board_name = os.environ.get('TRELLO_BOARD_NAME')
-        # print('In StatusList init')
-        # print('Board Id : ' + board_id)
         url = "https://api.trello.com/1/boards/" + board_id + "/lists"
 
-        #print(url)
         query = {
                     'key' : app.config.get("T_KEY"),
                     'token': app.config.get("T_TOKEN"),
@@ -104,13 +94,10 @@ class Item:
         
         url = "https://api.trello.com/1/cards/" + self.id
 
-        # print('Updating status of task Id: ', self.id)
-        # print('Status will be updated to :' + next_status['name'])
-        # print('date :', self.complete_date)
        
         if next_status['name'] == "To Do":
             self.complete_date = ''
-            print("Set date to :", self.complete_date)
+
         query = {
                     'key' : app.config.get("T_KEY"),
                     'token': app.config.get("T_TOKEN"),
@@ -124,7 +111,6 @@ class Item:
     def get_task_on_the_board(task_id): 
         
         board_id = os.environ.get('TRELLO_BOARD_ID')
-        board_name = os.environ.get('TRELLO_BOARD_NAME')
 
         url = "https://api.trello.com/1/boards/" + board_id + "/cards/" + task_id
 
@@ -141,11 +127,8 @@ class Item:
 class Items:
     def __init__(self):
         board_id = os.environ.get('TRELLO_BOARD_ID')
-        board_name = os.environ.get('TRELLO_BOARD_NAME')
-
-        #print(board_id, board_name)        
+    
         url = "https://api.trello.com/1/boards/" + board_id + "/cards"
-        #print(url)
 
         query = {
                 'key' : app.config.get("T_KEY"),
@@ -154,8 +137,6 @@ class Items:
             }
 
         response = requests.request("GET", url, params=query)
-
-        #print(response.json())
 
         #get a list of items
         statusList = StatusList()
@@ -177,7 +158,6 @@ class Items:
                             task['name'],
                             date_str)
                 self.items.append(item.get_item)
-            #print(item.get_item)
 
 
     
@@ -203,19 +183,3 @@ class Items:
 
         # Add the item to the list
         self.items.append(item)
-        #session['items'] = self.items
-
-
-    def save_item(self, item):
-        """
-        Updates an existing item in the session. If no existing item matches the ID of the specified item, nothing is saved.
-
-        Args:
-            item: The item to save.
-        """
-        existing_items = self.get_items()
-        updated_items = [item if item['id'] == existing_item['id'] else existing_item for existing_item in existing_items]
-
-        session['items'] = updated_items
-
-        return item
