@@ -59,6 +59,9 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 
+#selenium chrome driver
+chromedriver.exe
+
 # Translations
 *.mo
 *.pot

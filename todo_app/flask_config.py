@@ -12,4 +12,4 @@ class Config:
         
         self.TRELLO_BOARD_ID=os.environ.get('TRELLO_BOARD_ID')
         
-    
+        self.TRELLO_BOARD_NAME = os.environ.get('TRELLO_BOARD_NAME')
