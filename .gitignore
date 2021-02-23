@@ -121,3 +121,7 @@ env/
 
 ### Configuration files ###
 .env
+.vagrant
+
+###Log file in VM
+logs.txt
