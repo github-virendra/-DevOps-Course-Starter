@@ -36,8 +36,7 @@ Vagrant.configure("2") do |config|
 
     curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python 
 
-    #poetry install
-
+    
   SHELL
 
   config.trigger.after :up do |trigger|
@@ -46,9 +45,9 @@ Vagrant.configure("2") do |config|
     trigger.run_remote = {privileged: false, inline: "
     
     # Install dependencies and launch
-    # cd /vagrant
-    # pwd
-    #poetry install
+    cd /vagrant
+    pwd
+    poetry install
     
     nohup poetry run flask run --host=0.0.0.0 > logs.txt 2>&1 &
 
