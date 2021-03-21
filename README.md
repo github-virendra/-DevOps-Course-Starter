@@ -88,3 +88,20 @@ For running the end to end tests:
 ```bash
 $ poetry run pytest -s tests_e2e
 ```
+## Running the app via Vagrant VM
+To make vagrant automatically launch the app when you run vagrant up.Write a trigger to install your dependencies and launch the app after vagrant up, automating the steps.
+In /vagrant
+- Install dependecies : Poetry
+- Launch flask's development server: poetry run flask run
+If this step fails it may be because poetry, running inside the VM, has automatically detected the host system virtual environment (located in the .venv directory) and is trying to use it instead of creating its own! Unfortunately there's no way to exclude the host virtual environment from the directory sharing using VirtualBox. 
+If you're having this issue, delete .venv and edit your poetry.toml file to set the virtuals.in-project option to false.
+This tells poetry to create virtual environment files in a central location, outside your code directory. This side-steps the issue, and allows the host machine and VM to run their own independent virtual environments.
+
+Do port forwarding i.e redirect traffic from port 5000 on the host machine to port 5000 on the VM. This will let you access the app running in vagrant via your web browser. Add the below config in Vagrant file
+config.vm.network "forwarded_port", guest: 5000, host: 5000
+
+Run the command as a background process so that it doesn't make vagrant up hang.
+nohup poerty run flask run --host=0.0.0.0 > logs.txt 2>&1 &
+
+With these changes in place, re-launch your VM and check you can access your
+site by opening http://localhost:5000.
