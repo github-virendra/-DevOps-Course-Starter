@@ -3,6 +3,7 @@
 .env.template
 .gitignore
 .git
+.venv
 
 chromedriver.exe
 
