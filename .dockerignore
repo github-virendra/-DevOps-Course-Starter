@@ -1,0 +1,13 @@
+##Environemt configuration
+.env
+.env.template
+.gitignore
+.git
+.venv
+
+chromedriver.exe
+
+##Vagrant configuration
+.vagrant
+Vagrant-up-log.txt
+logs.txt

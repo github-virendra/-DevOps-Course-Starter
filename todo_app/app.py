@@ -47,8 +47,9 @@ def create_app():
         item.complete_item(next_status)
 
         return redirect(url_for('index'))
-
-    if __name__ == '__main__':
-        app.run()
-
     return app
+
+if __name__ == '__main__':
+    app = create_app()
+    app.run()
+

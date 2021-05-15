@@ -105,3 +105,23 @@ nohup poerty run flask run --host=0.0.0.0 > logs.txt 2>&1 &
 
 With these changes in place, re-launch your VM and check you can access your
 site by opening http://localhost:5000.
+
+## Running the app in a Docker
+Install Docker
+Dockerfile contains the container configuration.
+
+To build docker image use the below commands :
+For Development :
+docker build --target development --tag todo-app:dev .
+For Production :
+docker build --target production --tag todo-app:prod .
+
+To run the docker container
+Development:
+docker run --env-file ./.env -p 5000:5000 --mount type=bind,source="$(pwd)"/todo_app,target=/app/todo_app/ todo-app:dev
+Production:
+docker run --env-file ./.env -p 5000:5000  todo-app:prod
+
+List Docker continer : docker container list
+To stop the container : docker stop <container name>
+Remove the container : docker rm <container name>
