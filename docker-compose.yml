@@ -1,0 +1,27 @@
+version: "3.7"
+
+#docker run --env-file ./.env -p 5000:5000
+# --mount type=bind,source="$(pwd)"/todo_app,target=/app/todo_app/ todo-app:dev
+
+services:
+    app:
+        container_name: Development
+        image: todo-app:dev
+        ports:
+            - 5000:5000
+        volumes:
+            - ./todo_app:/app/todo_app
+        environment: 
+            - COMPOSE_PROJECT_NAME=TodoApp
+        env_file:
+            ./.env
+
+        container_name: test_e2e
+        image: todo-app:test
+        
+        volumes:
+            - .:/app
+        environment: 
+            - COMPOSE_PROJECT_NAME=TodoApp
+
+        

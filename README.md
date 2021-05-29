@@ -115,13 +115,24 @@ For Development :
 docker build --target development --tag todo-app:dev .
 For Production :
 docker build --target production --tag todo-app:prod .
+For Test :
+docker build --target test --tag todo-app:test .
 
 To run the docker container
 Development:
 docker run --env-file ./.env -p 5000:5000 --mount type=bind,source="$(pwd)"/todo_app,target=/app/todo_app/ todo-app:dev
 Production:
 docker run --env-file ./.env -p 5000:5000  todo-app:prod
+Test:
+docker run --env-file ./.env  --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests_e2e
+docker run --env-file ./.env.test  --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests
 
 List Docker continer : docker container list
 To stop the container : docker stop <container name>
 Remove the container : docker rm <container name>
+
+Using Docker compose
+Unit tests:
+    docker compose run -e ./.env.test -T app tests
+Integration and End to end tests:
+    docker compose run -e ./.env -T app tests_e2e

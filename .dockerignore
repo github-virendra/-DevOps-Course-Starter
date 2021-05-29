@@ -1,11 +1,13 @@
 ##Environemt configuration
 .env
+.env.test
 .env.template
 .gitignore
 .git
 .venv
 
 chromedriver.exe
+Backup - Dockerfile
 
 ##Vagrant configuration
 .vagrant
