@@ -5,17 +5,28 @@ from todo_app.data.trello_items import Board
 from dotenv import find_dotenv, load_dotenv
 from todo_app import app 
 from selenium.webdriver import Chrome
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
+
 
 file_path = find_dotenv('.env')
+print('env File path : ' + file_path + '\n')
 load_dotenv(file_path, override=True)
 
 @pytest.fixture(scope="module")
 def driver():
-    with Chrome() as driver:
+    opts = Options()
+    opts.add_argument('--headless')
+    opts.add_argument('--no-sandbox')
+    opts.add_argument('--disable-dev-shm-usage')
+    ##with Chrome('/app/chromedriver', options=opts) as driver:
+    #with Chrome('/usr/local/bin/chromedriver', options=opts) as driver:
+    with Chrome(ChromeDriverManager().install(), options=opts) as driver:
+    #with Chrome() as driver:
         yield driver
 
 @pytest.fixture(scope='module')

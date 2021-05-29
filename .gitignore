@@ -122,6 +122,7 @@ env/
 ### Configuration files ###
 .env
 .vagrant
+Backup - Dockerfile
 
 ###Log file in VM
 logs.txt

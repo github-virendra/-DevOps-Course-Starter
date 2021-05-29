@@ -11,10 +11,14 @@ python-dotenv = "^0.14.0"
 requests = "2.25.0"
 pytest = "^6.2.1"
 gunicorn = "^20.0.4"
+webdriver-manager = "^3.4.2"
+watchdog = {extras = ["watchmedo"], version = "^2.1.2"}
+
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.2"
 selenium = "^3.141.0"
+
 
 
 [build-system]
