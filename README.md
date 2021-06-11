@@ -136,3 +136,21 @@ Unit tests:
     docker compose run -e ./.env.test -T app tests
 Integration and End to end tests:
     docker compose run -e ./.env -T app tests_e2e
+
+Setting up Continous Integration (CI)
+To setup CI with Travis
+1. Go to Travis-ci.com and Sign up with GitHub.
+2. Accept the Authorization of Travis CI. You’ll be redirected to GitHub. For any doubts on the Travis CI GitHub Authorized OAuth App access rights message, please read more details below
+3. Click on your profile picture in the top right of your Travis Dashboard, click Settings and then the green Activate button, and select the repositories you want to use with Travis CI.
+
+Make Travis CI build your code
+To use docker in the .travis.yml :
+    Add docker under services section
+    
+Build an image for the Todo App using Dockerfile by adding the build image command in the script section of the .travis.yml file
+    docker build --target development --tag todo-app:dev .
+
+To trigger the build
+    Commit the changes to the local repository and push the code to check that the build runs.
+    To check that the build runs go to :
+        https://travis-ci.com/github/github-virendra/-DevOps-Course-Starter
