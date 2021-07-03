@@ -38,7 +38,7 @@ def test_app():
 
     with application.app_context():
          # Create the new board & update the board id environment variable
-        board = Board('Test Board 1')
+        board = Board("Test Board 1")
    
 
         os.environ['TRELLO_BOARD_ID'] = board.board_id
