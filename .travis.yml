@@ -4,7 +4,7 @@ script:
 - docker build --target test --tag todo-app:test .
 - docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests/test_view_model.py
 - docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests/test_endpoints.py
-- docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests_e2e
+#- docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests_e2e
 # env:
 #   global:
 #   - secure: gcAdaF0U8LmJuOctzL3TPgeC0tRUqKWtWYkn7TNc9PRHE+aJnNeKe2DPJgQBtKeC31YdOs52tcvKretZapD/DqJYyuCcXFTDns362ie3uu70nruYrC/FKFWTfUI7ACMWlQLGZc/YMP4NmlF1nm/SDaRiSBKF/lL48X6Qwtigq2Ylkz0u5Lp5AuBlaYeB0sWLjqIYvRCWJPeLQeDTIaH/yT/gV5nJVx+CSnLVSnbnX/EZYFWLeXLbYi8zVW7fRyrjacHOK0BRrrS7oPKhQ7ZcBF0PYjFhvbQupDRVsZB35/xuPReX/IMtJMonQbuLnm7tH6LT8kpHbRdCgTs4ZhicUr6/bwk/UIBluW/5sHgKxmoK4gi+4HJ6kfGAa2T6kpAlzpOci3eetshmbI1V5+AXwrIGq01igayseOqCgpH81r1ZbnVSzdhIAIEgVz0vXpG8huqVny1YlVdFM81+EOzQ8lHYgUNAr+SeDZsQ0JggvbuNlluasZCotm/b0+y9HLtSeIqJuXCV8XEoPXwoo/crlyZ5xHkX6++Qe9clQl/ynXa2TAkYBHg0TVqlJU4iUCo1SeVWmKdJGkkxWUz2wsUpJVbu9+gCb0hIs0lfXq8aZomdcAcyOAbFdHxWPKcrjsvv95rLvYE6E5C2J/Bz7F6Zgu1ANdPQ1Qtged24MRkyVpU=
