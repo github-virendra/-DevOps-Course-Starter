@@ -2,6 +2,8 @@ services:
 - docker
 script:
 - docker build --target test --tag todo-app:test .
-#- docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests/test_view_model.py
-#- docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests/test_endpoints.py
 - docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests_e2e
+env:
+  global:
+  - secure: p9nYBIiy6IT3/VZSIZVyOWHsDHUqHsAVQBo++m8TV48ytTpgagt1tTH+mPUhs0hKr5wz92KtZDDdmOorDcw+pfwZR/fU/EqBV6t8NGpA9qHB1OW5f7ZOYxKuCuLaSbQUe6xyanLn3trl36qxAe8RdkpZ2MrNYnzkMw94BPxNfcNHzL8VFtZpuf3g+Se8ek1YAmWDSjEueeANwIQ02pc3qFCzsZf2HYSoyTsBzRy6Ml30DkbrSfipkEBV8zxgNItzX2IV4JGIgYxbALZIdhWOWds0Zf3ufWOk3pPc3bWN853IWB3R2ry7VFiJq3a3nTgl2oYfa9B4Sac05Hq13Ot584LoVoeZr51aPNqMNZfJTeb2LYmjUWQr5USo8z74rR+oZjj0SuxxgMZzZzEL1edcIWQ63vMlNj+upXXAE8UNyXC/vSw+yhAJQTpoYX7yDf+SPBN/DVtQJkVqKlVckshlCQ4c/Vfk51rfHJh1EW7F5AiqtopU/H+wHUSTztzXOb57STCTly8HSnDEv7jgtvMC8sZD+RQzySihqno6M6kg1wrGHrYQDdMAnAbD3s318Zokd5Av8UHZGAx6uGvb4AJbJTJbU1Ecib73EzzA3AmSiKfBQQ437RK4vD9mBhJtmPIZ+Ur94p8Qu3WrlhKPJfsZcxb76tW/R9DUP3JALE/MIrE=
+  - secure: qMRjX9zW66ICAns33jiZiW16CvEAMKfizBUidodWOtnzBpoQ8GiZ+H7G69DSxtdtiQ0ZEjF/xt4hn+T5SqOcBynFde4mb7+4MAaE1w+kjjeqA0JjE/1vXvQrLAOH0vL/ylvFDbaStjPFLRrNXMiaFPaThm+L7xZUll3mmakFdiNuDnVc7NyKT84TzwoIZMVeLC4PCJnazzTpAXypWyfNVI1MVqZ2I34EZbY8fhfUzfvxd3Dwm0ds1DuQGFkjcLWSCHjz/yYsZ+gvtJNnFH5YaSJ7DQaa9pYTaadU8Kmw/cZ6IB8OWOXEJVzdnweNr5IJTEML5lSsIuXWBHVrzvUWE4XJc1CDzJEmol45X/SXSdMeKlqgjVAPgXNT+nMu3hoPykD2kK1eXusYB9F/Mzm+3W5CJPG0a90Lss2mqcQLCb0p8oDqrX/OAdj/p2RecVu/nCnzAykMo5ZYvzV0wsFiOgXK6vIyNBayfO+XHiaDzGq4u9FLfWq+nH7oGIq+Wxxoyyqj/sEYfc5Ukpb5Dy4Mpy0wRt8dvW23WS3S1O/EmF+dquCAl2DCmQlYbZGBVwLKh5hRJ6SqjnI5YfCOE4GRZjm1qlzUOpw50oFrjYiubT18J646OlTk2ZZp9dgfrqr/orn6Yv76y0iJlntGf5V4CuRcnXUZeeeHWL+0IZoiKug=
