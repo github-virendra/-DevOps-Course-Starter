@@ -148,9 +148,33 @@ To use docker in the .travis.yml :
     Add docker under services section
     
 Build an image for the Todo App using Dockerfile by adding the build image command in the script section of the .travis.yml file
-    docker build --target development --tag todo-app:dev .
+    docker build --target test --tag todo-app:test .
 
 To trigger the build
     Commit the changes to the local repository and push the code to check that the build runs.
     To check that the build runs go to :
         https://travis-ci.com/github/github-virendra/-DevOps-Course-Starter
+
+Part 1: Run the Tests in the conatiner by adding below docker run commands in .travis.yml
+    Step 1: Make Travis run the unit tests
+        docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests/test_view_model.py
+
+    Step 2: Make Travis run the integration tests
+        docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests/test_endpoints.py
+
+    Step 3: Make Travis run the E2E tests
+        Encrypting Env variables.
+            Encrypt environment variables with the public key attached to your repository using the travis gem:
+            1. If you do not have the travis gem installed, run gem install travis.
+            2. In your repository directory: If you are using https://travis-ci.com, 
+            see Encryption keys – Usage : https://docs.travis-ci.com/user/encryption-keys. 
+                travis encrypt VAR="secretvalue" --add will update the .travis.yml.
+            3.Commit the changes to your .travis.yml
+
+        docker run  -eT_KEY=$T_KEY -eT_TOKEN=$T_TOKEN --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests_e2e
+
+Part 2: Update the build settings
+    Step 1: Update the build frequency that will only run for pull requests
+        GoTo General Settings in Travis and enable only the "Build Push Requests". Disable "Build Pushed Branches".
+    Step 2: Enable auto cancelling builds
+        GoTo Setting in Travis. Under Auto Cancellation enable "Auto cancel branch builds".
