@@ -10,7 +10,7 @@ script:
 #- docker run  -eT_KEY=$T_KEY -eT_TOKEN=$T_TOKEN --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests_e2e
 
 - docker build --target production --tag virendras19/todo-app:latest --tag virendras19/todo_app:$TRAVIS_COMMIT .
-- docker image push --all-tags virendras19/todo-app
+- docker image push virendras19/todo-app:latest
 
 env:
   global:
