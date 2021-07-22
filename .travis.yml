@@ -1,7 +1,7 @@
 services:
 - docker
 before_script:
-- docker login $DOCKER_USERNAME $DOCKER_CODE
+- docker login -u $DOCKER_USERNAME -p $DOCKER_CODE
 
 script:
 #- docker build --target test --tag todo-app:test .
