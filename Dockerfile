@@ -10,7 +10,9 @@ FROM base as production
 ENV FLASK_ENV=production
 COPY ./todo_app/ /app/todo_app
 RUN poetry config virtualenvs.create false --local && poetry install --no-dev
-ENTRYPOINT [ "poetry", "run","gunicorn","--bind", "0.0.0.0:$PORT","todo_app.wsgi:app" ]
+#ENTRYPOINT [ "poetry", "run","gunicorn","--bind", "0.0.0.0:$PORT","todo_app.wsgi:app" ]
+RUN chmod +x ./entrypoint.sh
+ENTRYPOINT ./entrypoint.sh
 
 FROM base as development
 RUN poetry install
