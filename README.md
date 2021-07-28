@@ -191,8 +191,7 @@ heroku config:set `cat .env | grep TRELLO_BOARD_NAME`
 # Get the latest image from Docker Hub (built by your CI pipeline)
 $ docker pull virendras19/todo-app
 # Tag it for Heroku
-$ docker tag virendras19/todo-app registry.heroku.com/
-virendra-todo-app/web
+$ docker tag virendras19/todo-app registry.heroku.com/virendra-todo-app/web
 # Heroku container login
 heroku container:login
 # Push it to Heroku registry
