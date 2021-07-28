@@ -9,7 +9,7 @@ EXPOSE 5000
 FROM base as production
 ENV FLASK_ENV=production
 COPY ./todo_app/ /app/todo_app
-RUN poetry install --no-dev
+RUN poetry config virtualenvs.create false --local && poetry install --no-dev
 ENTRYPOINT [ "poetry", "run","gunicorn","--bind", "0.0.0.0:5000","todo_app.wsgi:app" ]
 
 FROM base as development

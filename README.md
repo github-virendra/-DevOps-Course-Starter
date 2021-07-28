@@ -178,3 +178,26 @@ Part 2: Update the build settings
         GoTo General Settings in Travis and enable only the "Build Push Requests". Disable "Build Pushed Branches".
     Step 2: Enable auto cancelling builds
         GoTo Setting in Travis. Under Auto Cancellation enable "Auto cancel branch builds".
+
+
+heroku config:set `cat .env | grep FLASK_APP`
+heroku config:set `cat .env | grep FLASK_ENV`
+heroku config:set `cat .env | grep T_KEY`
+heroku config:set `cat .env | grep T_TOKEN`
+heroku config:set `cat .env | grep TRELLO_BOARD_ID`
+heroku config:set `cat .env | grep TRELLO_BOARD_NAME`
+
+
+# Get the latest image from Docker Hub (built by your CI pipeline)
+$ docker pull virendras19/todo-app
+# Tag it for Heroku
+$ docker tag virendras19/todo-app registry.heroku.com/
+virendra-todo-app/web
+# Heroku container login
+heroku container:login
+# Push it to Heroku registry
+$ docker push registry.heroku.com/virendra-todo-app/web
+
+Release it
+heroku container:release web --app virendra-todo-app
+heroku open  --app virendra-todo-app
