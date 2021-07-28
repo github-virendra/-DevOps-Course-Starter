@@ -11,7 +11,7 @@ script:
 
 - docker build --target production --tag virendras19/todo-app:latest --tag virendras19/todo_app:$TRAVIS_COMMIT .
 - docker image push virendras19/todo-app:latest
-- docker image push virendras19/todo-app:$TRAVIS_COMMIT
+#- docker image push virendras19/todo-app:$TRAVIS_COMMIT
 
 env:
   global:
