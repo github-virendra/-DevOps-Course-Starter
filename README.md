@@ -192,8 +192,12 @@ heroku config:set `cat .env | grep TRELLO_BOARD_NAME`
 $ docker pull virendras19/todo-app
 # Tag it for Heroku
 $ docker tag virendras19/todo-app registry.heroku.com/virendra-todo-app/web
-# Heroku container login
+# Set AUTH KEY env var for Heroku
+HEROKU_API_KEY in Travis settings.
+# Heroku container login via Heroku CLI
 heroku container:login
+# Heroku container login via Docker CLI
+docker login --username=virendrasankpal@yahoo.com --password=$(heroku auth:token) registry.heroku.com
 # Push it to Heroku registry
 $ docker push registry.heroku.com/virendra-todo-app/web
 

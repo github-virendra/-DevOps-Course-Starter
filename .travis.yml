@@ -11,7 +11,12 @@ script:
 
 - docker build --target production --tag virendras19/todo-app:latest --tag virendras19/todo_app:$TRAVIS_COMMIT .
 - docker image push virendras19/todo-app:latest
-#- docker image push virendras19/todo-app:$TRAVIS_COMMIT
+- docker login --username=virendrasankpal@yahoo.com --password=$(heroku auth:token) registry.heroku.com
+- docker pull virendras19/todo-app
+- docker tag virendras19/todo-app registry.heroku.com/virendra-todo-app/web
+- docker push registry.heroku.com/virendra-todo-app/web
+- heroku container:release web --app virendra-todo-app
+- heroku open  --app virendra-todo-app
 
 env:
   global:
