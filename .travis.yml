@@ -2,34 +2,42 @@ services:
 - docker
 
 jobs:
-  # configuration setup stage
-  - stage: Configuration setup
-    script:
-    - docker login -u $DOCKER_USERNAME -p $DOCKER_CODE
-    - docker login --username=virendrasankpal@yahoo.com --password=$(heroku auth:token) registry.heroku.com
-    - heroku container:login
+  include:
+    # configuration setup stage
+    - stage: Configuration setup
+      script:
+      - docker login -u $DOCKER_USERNAME -p $DOCKER_CODE
+      - docker login --username=virendrasankpal@yahoo.com --password=$(heroku auth:token) registry.heroku.com
+      - heroku container:login
 
-  #test stage
-  - stage: test
-    script:
-    - docker build --target test --tag todo-app:test .
-    - docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests/test_view_model.py
-    - docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests/test_endpoints.py
-    - docker run  -eT_KEY=$T_KEY -eT_TOKEN=$T_TOKEN --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests_e2e
+    #test stage
+    - stage: test
+      name: "Build Container"
+      before script:
+      - docker build --target test --tag todo-app:test .
+      script:
+      - docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests/test_view_model.py
+      name: "Unit Test"
+      script:
+      - docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests/test_endpoints.py
+      name: "Endpoints Test"
+      script:
+      - docker run  -eT_KEY=$T_KEY -eT_TOKEN=$T_TOKEN --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests_e2e
+      name: "End to End Test"
 
-  #Deployment stage
-  - stage: Deploy
-    script:
-    - docker build --target production --tag virendras19/todo-app:latest --tag virendras19/todo_app:$TRAVIS_COMMIT .
-    - docker ps -a 
-    - docker image list
-    - docker login -u $DOCKER_USERNAME -p $DOCKER_CODE
-    - docker image push virendras19/todo-app:latest
-    - docker pull virendras19/todo-app
-    - docker tag virendras19/todo-app registry.heroku.com/virendra-todo-app/web
-    - docker push registry.heroku.com/virendra-todo-app/web
-    - heroku container:release web --app virendra-todo-app
-    - heroku open  --app virendra-todo-app
+    #Deployment stage
+    - stage: Deploy
+      script:
+      - docker build --target production --tag virendras19/todo-app:latest --tag virendras19/todo_app:$TRAVIS_COMMIT .
+      - docker ps -a 
+      - docker image list
+      - docker login -u $DOCKER_USERNAME -p $DOCKER_CODE
+      - docker image push virendras19/todo-app:latest
+      - docker pull virendras19/todo-app
+      - docker tag virendras19/todo-app registry.heroku.com/virendra-todo-app/web
+      - docker push registry.heroku.com/virendra-todo-app/web
+      - heroku container:release web --app virendra-todo-app
+      - heroku open  --app virendra-todo-app
 
 env:
   global:
