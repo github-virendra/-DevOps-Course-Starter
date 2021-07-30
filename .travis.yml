@@ -21,6 +21,8 @@ jobs:
   - stage: deployment prep phase
     script:
     - docker build --target production --tag virendras19/todo-app:latest --tag virendras19/todo_app:$TRAVIS_COMMIT .
+    - docker ps -a 
+    - docker image list
     - docker image push virendras19/todo-app:latest
     - docker pull virendras19/todo-app
 
