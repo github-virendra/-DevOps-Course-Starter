@@ -1,25 +1,26 @@
 services: docker
-stage: Test
-name: Build Container
-script: docker build --target test --tag todo-app:test .
-
 jobs:
-include:
-- stage: Test
-  name: "Unit Test"
-  script: docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests/test_view_model.py
-- script: docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests/test_endpoints.py
-  name: "Endpoint Test"
-- script: docker run  -eT_KEY=$T_KEY -eT_TOKEN=$T_TOKEN --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests_e2e
-  name: "End to End Tests"
+ include:
+  - stage: Test
+    before_script: docker build --target test --tag todo-app:test .
+    script: docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests/test_view_model.py
+    name: "Unit Test"
 
-- stage: Deploy
-  before_script:
-  - docker login -u $DOCKER_USERNAME -p $DOCKER_CODE
-  - docker login --username=virendrasankpal@yahoo.com --password=$(heroku auth:token) registry.heroku.com
-  - heroku container:login
-  
-  script:
+   
+  - before_script: docker build --target test --tag todo-app:test . 
+    script: docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests/test_endpoints.py
+    name: "Endpoint Test"
+    
+  - before_script: docker build --target test --tag todo-app:test . 
+    script: docker run  -eT_KEY=$T_KEY -eT_TOKEN=$T_TOKEN --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests_e2e
+    name: "End to End Tests"
+
+  - stage: Deploy
+    before_script:
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_CODE
+    - docker login --username=virendrasankpal@yahoo.com --password=$(heroku auth:token) registry.heroku.com
+    - heroku container:login
+    script:
     - docker build --target production --tag virendras19/todo-app:latest --tag virendras19/todo_app:$TRAVIS_COMMIT .
     - docker ps -a
     - docker image list
