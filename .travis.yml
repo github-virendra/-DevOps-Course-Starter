@@ -1,8 +1,12 @@
 services: docker
+services: docker
+stage: Test
+name: Build Conatiner
+script: docker build --target test --tag todo-app:test .
+
 jobs:
  include:
   - stage: Test
-    before_script: docker build --target test --tag todo-app:test .
     name: "Unit Test"
     script: docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests/test_view_model.py
    
