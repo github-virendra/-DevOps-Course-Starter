@@ -1,17 +1,24 @@
 services: docker
 jobs:
  include:
+  - stage: Build docker Image
+    script: 
+    - docker build --target test --tag todo-app:test .
+    - docker images
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_CODE
+    - docker image push virendras19/todo-app:test
+
   - stage: Test
-    before_script: docker build --target test --tag todo-app:test .
+    before_script: docker pull virendras19/todo-app
     script: docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests/test_view_model.py
     name: "Unit Test"
 
    
-  - before_script: docker build --target test --tag todo-app:test . 
+  - before_script: docker pull virendras19/todo-app 
     script: docker run --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests/test_endpoints.py
     name: "Endpoint Test"
     
-  - before_script: docker build --target test --tag todo-app:test . 
+  - before_script: docker pull virendras19/todo-app 
     script: docker run  -eT_KEY=$T_KEY -eT_TOKEN=$T_TOKEN --mount type=bind,source="$(pwd)"/,target=/app/ todo-app:test tests_e2e
     name: "End to End Tests"
 
@@ -22,12 +29,15 @@ jobs:
     - heroku container:login
     script:
     - docker build --target production --tag virendras19/todo-app:latest --tag virendras19/todo_app:$TRAVIS_COMMIT .
+    - docker ps -a
+    - docker image list
     - docker image push virendras19/todo-app:latest
     - docker pull virendras19/todo-app
     - docker tag virendras19/todo-app registry.heroku.com/virendra-todo-app/web
     - docker push registry.heroku.com/virendra-todo-app/web
     - heroku container:release web --app virendra-todo-app
     - heroku open  --app virendra-todo-app
+
     on:
       branch: module-eight
  
