@@ -217,9 +217,12 @@ by :
 • Automatically builds and deploys your main branch to Heroku
 • Also publishes the Docker images to Docker Hub
 
-Please note : To make Heroku CLI suitable for CI set a HEROKU_API_KEY environment variable in
-Travis. 
+Please note :
+   • To make Heroku CLI suitable for CI set a HEROKU_API_KEY environment variable in Travis. 
 Reference : https://devcenter.heroku.com/articles/container-registry-and-runtime#logging-in-to-the-registry
+    • The ENTRYPOINT and CMD exec form does not support variable substitution, so won't work with $PORT. Additionally, the shell form does not work with the way Heroku invokes it. So, you should put your command in a separate file, entrypoint.sh, and then invoke it with ENTRYPOINT ./entrypoint.sh.
+    • You may encounter issues creating Python virtual environments in Docker containers running on Heroku. If so, adjust your Dockerfile to run poetry without a virtualenv (RUN poetry config virtualenvs.create false --local && poetry install --no-dev). There's no need to create a virtualenv inside Docker: the container already provides an isolated Python environment.
+    • Set Travis CI's deploy stage to only trigger on a master branch. For test purposes it is set to module-8.
 
 Test it out! Push a small change to main branch, wait for the pipeline to complete,
 then check it's visible on the live site.
