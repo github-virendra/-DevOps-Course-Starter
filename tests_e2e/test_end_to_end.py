@@ -13,12 +13,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-file_path = find_dotenv('.env')
-print('env File path : ' + file_path + '\n')
-load_dotenv(file_path, override=True)
-
 @pytest.fixture(scope="module")
 def driver():
+    file_path = find_dotenv('.env')
+    print('env File path : ' + file_path + '\n')
+    load_dotenv(file_path, override=True)
     opts = Options()
     opts.add_argument('--headless')
     opts.add_argument('--no-sandbox')
@@ -38,7 +37,7 @@ def test_app():
 
     with application.app_context():
          # Create the new board & update the board id environment variable
-        board = Board('Test Board 1')
+        board = Board("Test Board 1")
    
 
         os.environ['TRELLO_BOARD_ID'] = board.board_id
