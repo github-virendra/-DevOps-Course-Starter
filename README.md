@@ -178,3 +178,49 @@ Part 2: Update the build settings
         GoTo General Settings in Travis and enable only the "Build Push Requests". Disable "Build Pushed Branches".
     Step 2: Enable auto cancelling builds
         GoTo Setting in Travis. Under Auto Cancellation enable "Auto cancel branch builds".
+
+Hosting the Todo App on Heroku
+
+Step 1: Create & Configure Heroku App
+
+    a. Create an Heroku account. Create an Heroku app - virendra-todo-app
+    b. Configure the the production environment variables your code needs to run in Heroku virendra-todo-app/Settings. Environment variables like TRELLO API key credentials, BOARD ID to use.
+
+Step 2: Push an Image to Heroku
+
+Heroku can't deploy images from Docker Hub directly, but instead uses its own (private) Docker registry. You need to push your image there, then tell Heroku to deploy it. 
+
+    # Get the latest image from Docker Hub (built by your CI pipeline)
+    $ docker pull virendras19/todo-app
+    # Tag it for Heroku
+    $ docker tag virendras19/todo-app registry.heroku.com/virendra-todo-app/web
+    # Set AUTH KEY env var for Heroku
+    HEROKU_API_KEY in Travis settings.
+    # Heroku container login via Heroku CLI
+    heroku container:login
+    # Heroku container login via Docker CLI
+    docker login --username=virendrasankpal@yahoo.com --password=$(heroku auth:token) registry.heroku.com
+    # Push it to Heroku registry
+    $ docker push registry.heroku.com/virendra-todo-app/web
+
+Step 3: Release it
+
+Pushing an image to Heroku doesn't release it immediately. Instead, you will need to use the heroku container:release web command. You can run heroku open to automatically open the web app in your browser.
+heroku container:release web --app virendra-todo-app
+heroku open  --app virendra-todo-app
+
+Part 3: Continuous Deployment
+Above steps, Part 1 provides CI pipeline instructions  to produce production-ready Docker images, and in Part 2 provides you anatomy of how to deploy these images to your Heroku environment from the command line.
+
+Apply the above changes to Travis CI to expand the CI pipeline into continous deployment.
+by :
+• Automatically builds and deploys your main branch to Heroku
+• Also publishes the Docker images to Docker Hub
+
+Please note : To make Heroku CLI suitable for CI set a HEROKU_API_KEY environment variable in
+Travis. 
+Reference : https://devcenter.heroku.com/articles/container-registry-and-runtime#logging-in-to-the-registry
+
+Test it out! Push a small change to main branch, wait for the pipeline to complete,
+then check it's visible on the live site.
+
