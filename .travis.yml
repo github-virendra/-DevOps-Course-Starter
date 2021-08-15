@@ -1,7 +1,7 @@
 services: docker
 jobs:
  include:
-  - stage: Build docker Image
+  - stage: Build docker Test Image
     script: 
     - docker build --target test --tag virendras19/todo-app:test .
     - docker images
@@ -29,14 +29,10 @@ jobs:
     - heroku container:login
     script:
     - docker build --target production --tag virendras19/todo-app:latest --tag virendras19/todo_app:$TRAVIS_COMMIT .
-    - docker ps -a
-    - docker image list
     - docker image push virendras19/todo-app:latest
-    - docker pull virendras19/todo-app
     - docker tag virendras19/todo-app registry.heroku.com/virendra-todo-app/web
     - docker push registry.heroku.com/virendra-todo-app/web
     - heroku container:release web --app virendra-todo-app
-    - heroku open  --app virendra-todo-app
 
     on:
       branch: module-8
