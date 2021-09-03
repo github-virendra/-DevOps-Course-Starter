@@ -1,15 +1,16 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from todo_app.data.view_model import ViewModel
 from todo_app.flask_config import Config
-from todo_app.data.trello_items import Item, Items, StatusList
+from todo_app.data.mongo_items import Item, Items, StatusList
 import requests
-from datetime import datetime
+from datetime import datetime, timezone
 import os
+
+
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config())
-
 
     @app.route('/')
     def index():
@@ -29,6 +30,7 @@ def create_app():
     def complete_item():
         #Get the card details to update
         task_id = request.form.get('taskId')
+        print(task_id)
 
         #get the card on the board
         response = Item.get_task_on_the_board(task_id)
@@ -39,7 +41,7 @@ def create_app():
 
         'updating task from Doing to Done update the completion date'
         if current_status == 'Doing':
-            item = Item(response['id'],current_status,response['name'],datetime.now().strftime("%c"))
+            item = Item(response['id'],current_status,response['name'],datetime.now(timezone.utc).isoformat().replace("+00:00","Z"))
         else:
             item = Item(response['id'],current_status,response['name'],response['due'])
         
