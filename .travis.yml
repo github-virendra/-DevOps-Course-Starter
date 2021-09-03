@@ -1,43 +1,43 @@
 services: docker
 jobs:
- include:
+  include:
   - stage: Build docker Test Image
-    script: 
+    script:
     - docker build --target test --tag virendras19/todo-app:test .
     - docker images
     - docker login -u $DOCKER_USERNAME -p $DOCKER_CODE
     - docker image push virendras19/todo-app:test
-
   - stage: Test
     before_script: docker pull virendras19/todo-app:test
-    script: docker run --mount type=bind,source="$(pwd)"/,target=/app/ virendras19/todo-app:test tests/test_view_model.py
-    name: "Unit Test"
-
-   
-  - before_script: docker pull virendras19/todo-app:test 
-    script: docker run --mount type=bind,source="$(pwd)"/,target=/app/ virendras19/todo-app:test tests/test_endpoints.py
-    name: "Endpoint Test"
-    
-  - before_script: docker pull virendras19/todo-app:test 
-    script: docker run  -eT_KEY=$T_KEY -eT_TOKEN=$T_TOKEN --mount type=bind,source="$(pwd)"/,target=/app/ virendras19/todo-app:test tests_e2e
-    name: "End to End Tests"
-
+    script: docker run --mount type=bind,source="$(pwd)"/,target=/app/ virendras19/todo-app:test
+      tests/test_view_model.py
+    name: Unit Test
+  - before_script: docker pull virendras19/todo-app:test
+    script: docker run --mount type=bind,source="$(pwd)"/,target=/app/ virendras19/todo-app:test
+      tests/test_endpoints.py
+    name: Endpoint Test
+  - before_script: docker pull virendras19/todo-app:test
+    script: docker run  -eM_KEY=$M_KEY -eM_TOKEN=$M_TOKEN --mount type=bind,source="$(pwd)"/,target=/app/
+      virendras19/todo-app:test tests_e2e
+    name: End to End Tests
   - stage: Deploy
     before_script:
     - docker login -u $DOCKER_USERNAME -p $DOCKER_CODE
-    - docker login --username=virendrasankpal@yahoo.com --password=$(heroku auth:token) registry.heroku.com
+    - docker login --username=virendrasankpal@yahoo.com --password=$(heroku auth:token)
+      registry.heroku.com
     - heroku container:login
     script:
-    - docker build --target production --tag virendras19/todo-app:latest --tag virendras19/todo_app:$TRAVIS_COMMIT .
+    - docker build --target production --tag virendras19/todo-app:latest --tag virendras19/todo_app:$TRAVIS_COMMIT
+      .
     - docker image push virendras19/todo-app:latest
     - docker tag virendras19/todo-app registry.heroku.com/virendra-todo-app/web
     - docker push registry.heroku.com/virendra-todo-app/web
     - heroku container:release web --app virendra-todo-app
-
     on:
       branch: module-8
- 
 env:
   global:
   - secure: j0qzXTqWRDev723kRcNFRu5WVrr/9I/inGGvGF7oq6gRtwplTgORF+xGq5FFeOwXcg1+18U5mDz+DbJ9unBVG4F+Kvg29pIHkZ6rl+SYzfijyc0mxV/2U3YKQFFgNRDDtcl/rGXZNsi2gLvT0QTOIPmZecn2rWziIDLte/XupcdG6P2xdlzAIV8BVtqDzq3I3VTXkpYCAW9l3Vgjmc0yguNsCf2RhwRRkPHRwDHtgz6R2MWEJ1AYWuPPFRHf6veEyAQphk2t45MTFjITkcaNqEiqelnIfgdV0qcnpjCLGoz/o8g+eK88KuAph1SQJq0dTFEHkVMixMLXGWag2/B0e3mSvwl0D792libtZUIqqxanciaXXqTors6r6LZuZIIxixO8d95JUaFmsnwBGLvRcg6NQYe6FhJx/MRIR4IBoOkDBBoRdR9kCqNeWNF+nRv4hvJ1e+0UsFe38R5N1TVfgMkNfak6ZXypmwt216xwgU81xnLyNOj2LqxeXKWQiZVvZ5ggDWjCTQa9o7bY1u2V9EHPjaAH3z4hyyx6babP1o4VedLvSqKvHQ4A2DDN5dIjlc8WYVEkjwZGrmEGAJ84nt7OWkASk5aeHFPYhtSIwjWF/KBIkNaVEzhIKmLhJ8qO1a8MGtFVJMwd6t7yoYHwULDz382Id7l8vJB1L2z6A5Q=
   - secure: droLiUFPGdhRVNLEs5knIW6PfPUpGrxBj7PyaGzDx7mttjfjwEwX0/347n3QzV2qhB0bLIDTI5Zl8nCWMWcmswZ1omCA/sBfNzsTk+0LcMp6urNXYDNYmJWUWn9WRX2+lU9YvA/mnPJKuCMdPJnFjBS8JQMC8QGP5XOe1Y73yMegW7E7/GVlhsvIFlxog3n/dBs/G/pCK22rq+ZhxcWsO03xSXRpqt8Dnc3p3My4N4P2Jr/M1dPURLLuUh9EgcH9K1BppZLqdF08KzJytnAs4i9Tw3ZWDjLOpBXd2PqlT1Ko61JL13F/rzmnDM0I/6IJymmtxRVOc2TzBGiWCFubSgVZMGi4FArdskI1KDjOUjWtw1KuhDjZSvBCsadRlbrHm37uuctiXVR9KbNrpCY/8eTOS5n9pr4z3D2qnCbCuwC8iXzq3GJqNDk6NphLiSye9Ain8MmLHLBxHk6dn5T5pc4VKuFPAYXmbcub2Jb1XXT0DaKHFbaaXTn8U11YFmiJyjBR6+UhugLMeEueuIP8myURkv8HT/aDrq9h67ZbKE33qo/3rtM8zR/wz47oDoWPxqxW2s2n2/JWpjH3BkzYIDUn9Eb+YbRrQP9lOVze4OHrIgPis2ijlmqsruUJXQ98b/7OfWfCRGyvS2vQ7hdRYYXODUWnnuM4n4pvep7Yp/4=
+  - secure: RMPcnl+kNBb2JOVeEo/PWZSrfYIY+hRTCpg/bRu2OLcPo0ePxhDwuFVY65yVU4Gtg0WKfpYDAXVFoJbeTN06sAYpCgqjXME4StGtPsK139hry+eYtmWv7ZANcKpiPVUzKCVXOgiL8hy2wFYisjkqi5h6k3Wxvt6cJmLMT8HR+k7OuxB04u04Xvgctq6pKoHrDFt7Ny18QNbpGZbf7WvEVbAdlaG/b3pfy6RSFX/VKIoVZkv8pEXoqz13+u4aE79ySDpsn//p8A5SlciirASXgRjQANfRbe0ouDZUVYTt/97/bnDdHmiTHnDj9q0bRvlLbGhwEWlGkUM9ul8jGbloGi/RBR20bk9vo3eTvxXgQl1l7LAu0veu5J3OxuYsIxPdzblagDZM6PDlSk4InykLrLz3cpZdFtKhh/WWhfop8XEY4KEtXiU47xYOG+hxCX1z2L21l8PQZQ/0MM4LzxdqBVxa8KHBCWz+UzLFQgGjMfxCBA99lbEO/rUCvqpRJW45Sz+Zkx8kzI8WkqsKQ+2BTgtZwhb1JL4RD0tuIARBN6ryDGxVfFKeOm2qdlousfeMF8uW4cZO81ltEbhb7S25obfjGJ6Lw4LFg+8zJW3IBfKnQhm7YGcAttW1YK9kW+rKcp1AIc/+lZi6FIxjHDZjSky2uvyXsShobjUSZsDuquA=
+  - secure: kQm6xVqYhLuCQrKfPqAd5potwYUZSqDBLiI7uL+HKgQe94iltggRNjWMTjKwTN51vSZmrFzQ3RfR6sxTYYpPlI1zv29GLCaLR4/tuH54ZXRD1lgSfhp2VL7W/CDNwOzMqSEpFSYJFgl2eL6/neYN5FIpOJ7lFAm3pRsrpeOVms3VhiJEOK4KnA6h+5OQuZ5Y7JzTixNcfYkLSTXiQHVLBf+hzOVEx9XJbe4WQPkuM3BgfbRG2qlwj2nwXk9u5fFUByEHSQsSgltQmEarrfprIcz7P5lkI7/tsLd79uUgg1NTiDm94u07DcanUIUN+zlfFW/1XQ/F2V7tzRcp+/xVrtliulraugHPGYuqh921b46NOv4LKdSxiQrCImCGhRdlf+4oL1b9sZA+K0EeVv2f2nG/uNfXz33Y01dwqkrnrcEbahG8fApqQzTcWCR9myymDx9EMR3Zk3WHRD5bwR/78fddvNDUdV6xr5K3ZvpufJnw4ywLDAMVMvziefQoqiVLP1DUy9jdmfpjmFQzlUiJM7ibpMSjRe5eTEThktAZ9lod1bHHQtRugOz1EE7BtXqFInouIy7Vjo+Hfr24SidhFATv74zcDGaXd3GLMHlFMIJ/NPLqptapbb1W0C0CU0bSvWWmiV5ed9ldPmlGRmV185xlgDp88+YoNXi257KyeY0=
