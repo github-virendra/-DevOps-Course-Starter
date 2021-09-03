@@ -1,5 +1,7 @@
 from dotenv import find_dotenv, load_dotenv
 import requests
+from todo_app import db
+
 
 import pytest
 import os
@@ -18,17 +20,15 @@ def client():
     with test_app.test_client() as client:
         yield client
 
-class MockResponse:
-    def __init__(self,*args, **kwargs):
-        self.method_ = args[0]
-        self.url_ = args[1]
-        for kwarg in kwargs.values():
-            self.params_ = kwarg
+
+class MockMongoResponse:
+    def __init__(self):
+        print("Connected to Mongo Dummy interface")       
         
     
-    def json(self):
-        if self.url_.find('cards') > 0:
-            return [
+    def get_cards_on_a_board(self,board_id):
+        print('get_cards_on_a_board')
+        return [
                 {
                     "id": "5feb2bda1dcba5309a368592",
                     "name": "Task A",
@@ -44,29 +44,32 @@ class MockResponse:
                     "due": "2020-12-30T16:04:00.000Z"
                 }
             ]
-
-        if self.url_.find('lists') > 0:
-            return [
-                        {
-                            "id": "5feb25447bb43e82547a17f1",
-                            "name": "To Do",
-                            "idBoard": "5feb252a40ff2d09fa3a8eea"
-                        },
-                        {
-                            "id": "5feb2553117c378500b8dd3c",
-                            "name": "Doing",
-                            "idBoard": "5feb252a40ff2d09fa3a8eea"
-                        },
-                        {
-                            "id": "5feb2558a39bc5366ab8df8e",
-                            "name": "Done",
-                            "idBoard": "5feb252a40ff2d09fa3a8eea"
-                        }
+    def get_lists_on_a_board(self,board_id):
+        print('get_lists_on_a_board')
+        return [
+                    {
+                        "id": "5feb25447bb43e82547a17f1",
+                        "name": "To Do",
+                        "idBoard": "5feb252a40ff2d09fa3a8eea"
+                    },
+                    {
+                        "id": "5feb2553117c378500b8dd3c",
+                        "name": "Doing",
+                        "idBoard": "5feb252a40ff2d09fa3a8eea"
+                    },
+                    {
+                        "id": "5feb2558a39bc5366ab8df8e",
+                        "name": "Done",
+                        "idBoard": "5feb252a40ff2d09fa3a8eea"
+                    }
                 ]
+
+
+
+db.DBMongo = MockMongoResponse
 def test_index_page(monkeypatch, client):
     def mock_get_requests(*args, **kwargs):
-        return MockResponse(*args, **kwargs)
-
-    monkeypatch.setattr(requests,"request", mock_get_requests)      
+        return MockMongoResponse(*args, **kwargs)
+    
     response = client.get('/')
     assert b'Task A' in response.data

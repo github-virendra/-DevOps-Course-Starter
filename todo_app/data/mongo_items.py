@@ -20,7 +20,6 @@ class Board:
     def delete_board(self):
         print('\nDeleting Board :' , self.board_id)
         result = DBMongo().delete_board(self.board_id)
-        #response = requests.request("DELETE", url, params=query).json()
         if result == True:
             print("Board Deleted")
             return True 
@@ -31,15 +30,6 @@ class StatusList:
 
         board_id = os.environ.get('MONGO_BOARD_ID')
         response = DBMongo().get_lists_on_a_board(board_id)
-        # url = "https://api.trello.com/1/boards/" + board_id + "/lists"
-
-        # query = {
-        #             'key' : app.config.get("T_KEY"),
-        #             'token': app.config.get("T_TOKEN"),
-        #             'fields' : 'id,name,idBoard'
-        #      }
-
-        # response = requests.request("GET", url, params=query).json()
         self.statuses_ = response
 
     
@@ -79,20 +69,10 @@ class Item:
     
     def complete_item(self, next_status):
         
-        # url = "https://api.trello.com/1/cards/" + self.id
-
-       
+      
         if next_status['name'] == "To Do":
             self.complete_date = None
 
-        # query = {
-        #             'key' : app.config.get("T_KEY"),
-        #             'token': app.config.get("T_TOKEN"),
-        #             'due': self.complete_date,
-        #             'idList': next_status['id']
-        #         }
-
-        # requests.request("PUT", url, params=query)
         board_id = os.environ.get('MONGO_BOARD_ID')
         list_id= next_status['id']
         status_id = StatusList().get_status_id(self.status)
@@ -103,16 +83,6 @@ class Item:
     def get_task_on_the_board(task_id): 
         
         board_id = os.environ.get('MONGO_BOARD_ID')
-
-        # url = "https://api.trello.com/1/boards/" + board_id + "/cards/" + task_id
-
-        # query = {
-        #             'key' : app.config.get("T_KEY"),
-        #             'token': app.config.get("T_TOKEN"),
-        #             'fields': 'id,name,idBoard,idList,due'
-        #     }
-
-        # response = requests.request("GET", url, params=query).json()
         result = DBMongo().get_a_card_on_a_board(board_id,task_id)
 
         return result
@@ -120,12 +90,8 @@ class Item:
 class Items:
     def __init__(self):
         board_id = os.environ.get('MONGO_BOARD_ID')
-        #db = get_db().list_collection_names()
 
         result = DBMongo().get_cards_on_a_board(board_id)
-        print("In Items construction:")
-        print(type(result))
-
 
         #get a list of items
         statusList = StatusList()
@@ -135,9 +101,8 @@ class Items:
         for task in result:
             date_str = ""
             if task['due'] != None:
-                print("Date due:" + task['due'] [:-1])
                 date_str = datetime.fromisoformat(task['due'] [:-1]).strftime("%c")
-                #date_str = datetime.fromisoformat(task['due']).strftime("%c")
+
                 item = Item(task['id'], 
                             statusList.get_status_name(task['idList']),
                             task['name'],
@@ -158,20 +123,4 @@ class Items:
 
     
     def add_item(self, title, list_id):
-        
-        # #Api call
-        # url = "https://api.trello.com/1/cards"
-        # query = {
-        #             'key' : app.config.get("T_KEY"),
-        #             'token': app.config.get("T_TOKEN"),
-        #             'idList': list_id,
-        #             'name' : title,
-        #             'desc' : title
-        #     }
-        
-        # response = requests.request("POST",url, params=query).json()
         DBMongo().add_a_card_to_ToDoList(title,list_id)
-        #item = Item(result['id'], "To Do", result['name'], result['due'])
-
-        # Add the item to the list
-        #self.items.append(item)

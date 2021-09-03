@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from todo_app.data.view_model import ViewModel
 from todo_app.flask_config import Config
 from todo_app.data.mongo_items import Item, Items, StatusList
-import requests
 from datetime import datetime, timezone
 import os
 
@@ -30,8 +29,7 @@ def create_app():
     def complete_item():
         #Get the card details to update
         task_id = request.form.get('taskId')
-        print(task_id)
-
+   
         #get the card on the board
         response = Item.get_task_on_the_board(task_id)
 

@@ -11,7 +11,6 @@ class DBMongo:
     def __init__(self):
 
         try:
-            #self.client = MongoClient("mongodb+srv://vsankpa1:7Brause@virendra-mongodb-cluste.280hx.mongodb.net/Virendra-MongoDB-Cluster0?retryWrites=true&w=majority")
             url = "mongodb+srv://" + str(os.environ['M_KEY']) + ":" + str(os.environ["M_TOKEN"]) + "@virendra-mongodb-cluste.280hx.mongodb.net/Virendra-MongoDB-Cluster0?retryWrites=true&w=majority"
             self.client = MongoClient(url)
             self.db = self.client['TodoDB']
