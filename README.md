@@ -228,3 +228,139 @@ Reference : https://devcenter.heroku.com/articles/container-registry-and-runtime
 Test it out! Push a small change to main branch, wait for the pipeline to complete,
 then check it's visible on the live site.
 
+Replacing Trello Api and Data model with MongoDB.
+
+MongoDB is an open-source NOSQL database.
+
+Part 1: Configure MongoDB database 
+
+MongoDB Atlas service will be used, https://www.mongodb.com/cloud/atlas.
+Free tier will be used to create a MongoDB cluster. 
+Signup process - https://www.mongodb.com/try
+Username and password will be used as the authentication method.
+The access to the clusters is currently set to access from anywhere.
+Refer the "Connect your application" option. It will provide sample code for connecting your application.
+
+Step 2: Installing Pymongo
+
+Python support for MongoDB in the form of PyMongo. Once installed one should be able to interact with MongoDB from the Python shell.
+Configure via poetry: poetry add pymongo pymongo[srv].
+
+Step 3: Connecting to Atlas
+
+Parameter and where to find it?
+
+USER_NAME:  Created in step 1. A list is visible in the "Database Access" menu under the "Security" heading.
+
+PASSWORD: Created in step 1. If lost you'll have to to change the password in the "Database Access" menu.
+
+MONGO_URL: Visible in the "Connect" menu of your cluster. Look for a URL that ends .mongodb.net
+DEFAULT_DATABASE The name of the default database: you choose what this is.
+
+Once you have these you can run the following lines of code in the Python shell.
+
+The result should be something similar to the last line. If you run into problems check Atlas' troubleshooting Documentation.
+
+>>> import pymongo
+>>> client = pymongo.MongoClient("mongodb+srv://
+<USER_NAME>:<PASSWORD>@<MONGO_URL>/<DEFAULT_DATABASE>?w=majority")
+>>> client.list_database_names()
+['admin', 'local']
+
+Part 2: Replacing Trello
+
+Step 1: Updating the code
+Replace Trello Data Model with MongoDB One to Many relational data model.
+
+Creating a Database :
+>>> client.list_database_names()
+['test_database', 'admin', 'local']
+
+>>> db = client.Board
+
+Using Postman format the json structure as below data model and extract data from Trello.
+
+>>> board = <'Data sourced from Trello'>
+
+>>> db.Board = board
+
+This will create the collection Board in MongoDB.
+
+
+Mongo Data Model:
+
+{
+
+   "name" : "Test Board",
+
+   "desc" : "",
+
+   "_id" : ObjectId(),
+
+   "status" : [
+
+		{
+		    "_id": ObjectId(),
+            "name": "To Do",
+            "cards": [
+                        {
+
+                        }
+                    ]
+	    },
+        {
+		    "_id": ObjectId(),
+            "name": "Doing",
+            "cards": [
+                        {
+
+                        }
+                    ]
+	    },
+        {
+		    "_id": ObjectId(),
+            "name": "Done",
+            "cards": [
+                        {
+
+                        }
+                    ]
+	    }
+	]
+}
+
+Code Changes required:
+
+Added new module db with DBMongo class to interface with MongoDB collection.
+
+Replaced trello_items  with mongo_items module to process the data fetched from MongoDB using DBMongo class.
+
+The security credentials are replaced in the .env, .env.test and other configuration files.
+
+M_KEY and M_TOKEN are key credentials for using MongoDB.
+
+Unit, integration and end to end tests were also modified to ensure the changes are working locally.
+
+Re-Build the docker images and test them locally. 
+
+Step 2: Update CI/CD
+
+Update the CI/CD pipeline to provide the new environment variables required to connect to Atlas. 
+
+Modified .travis.yml file and Heroku settings to configure the Mongo DB security and configuration settings.
+
+Step 3: Tidy up
+
+Removed code related to Trello as it is no longer needed.
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,7 +1,7 @@
 import os
 import pytest
 from threading import Thread
-from todo_app.data.trello_items import Board
+from todo_app.data.mongo_items import Board
 from dotenv import find_dotenv, load_dotenv
 from todo_app import app 
 from selenium.webdriver import Chrome
@@ -40,7 +40,7 @@ def test_app():
         board = Board("Test Board 1")
    
 
-        os.environ['TRELLO_BOARD_ID'] = board.board_id
+        os.environ['MONGO_BOARD_ID'] = board.board_id
         print('Board id: ' + board.board_id + '\n')
  
         # start the app in its own thread.
